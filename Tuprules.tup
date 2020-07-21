@@ -1,0 +1,32 @@
+.gitignore
+
+HOSTARCH = i386
+ARCHDIR = arch/$(HOSTARCH)
+
+HOSTARCH = i386
+ARCHDIR = arch/$(HOSTARCH)
+
+&sysroot = sysroot
+&prefix = sysroot/usr
+&libdir = sysroot/usr/lib
+&includedir = sysroot/usr/include
+
+&libcinclude = libc/include
+&libcresult = libc/
+&kernelinclude = os/include
+
+PREFIX = /usr
+BOOTDIR = /boot
+
+CC = i686-elf-gcc
+AR = i686-elf-ar
+
+CFLAGS += -O2
+CFLAGS += -g
+CFLAGS += -ffreestanding
+CFLAGS += -Wall
+CFLAGS += -Wextra
+
+!cc = |> $(CC) --sysroot=&(sysroot) -I&(libcinclude) -I&(kernelinclude) -c %f -o %o $(CFLAGS) $(CPPFLAGS) |>
+!ld = |> $(CC) --sysroot=&(sysroot) -T $(ARCHDIR)/linker.ld -o %o $(CFLAGS) %f -L&(libcresult) $(LIBS) |>
+!ar = |> $(AR) rcs %o %f |>

@@ -1,0 +1,15 @@
+include_rules
+
+CPPFLAGS += -D__is_kernel
+
+LIBS += -nostdlib
+LIBS += -lk
+LIBS += -lgcc
+
+: foreach kernel/*.S kernel/*.c |> !cc |> kernel/%B.o
+: |> cp `$(CC) -print-file-name=crtbegin.o` %o |> $(ARCHDIR)/crtbegin.o
+: |> cp `$(CC) -print-file-name=crtend.o` %o |> $(ARCHDIR)/crtend.o
+
+: foreach $(ARCHDIR)/*.S $(ARCHDIR)/*.c |> !cc |> $(ARCHDIR)/%B.o
+
+: kernel/*.o $(ARCHDIR)/*.o | ../libc/libk.a |> !ld |> myos.kernel

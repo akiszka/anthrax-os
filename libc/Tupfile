@@ -1,0 +1,10 @@
+include_rules
+
+CPPFLAGS += -D__is_libk
+
+: foreach stdio/*.c  |> !cc |> stdio/%B.o
+: foreach stdlib/*.c |> !cc |> stdlib/%B.o
+: foreach string/*.c |> !cc |> string/%B.o
+: foreach $(ARCHDIR)/*.c |> !cc |> $(ARCHDIR)/%B.o
+
+: stdio/*.o stdlib/*.o string/*.o $(ARCHDIR)/*.o |> !ar |> libk.a
