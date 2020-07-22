@@ -3,11 +3,11 @@
 HOSTARCH = i386
 ARCHDIR = arch/$(HOSTARCH)
 
-&sysroot = sysroot
+&include_libc = libc/include
+&include_os = os/include
 
-&libcinclude = libc/include
-&libcresult = libc/
-&kernelinclude = os/include
+&libc = libc/
+&os = os/
 
 CC = i686-elf-gcc
 AR = i686-elf-ar
@@ -18,6 +18,6 @@ CFLAGS += -ffreestanding
 CFLAGS += -Wall
 CFLAGS += -Wextra
 
-!cc = |> $(CC) --sysroot=&(sysroot) -I&(libcinclude) -I&(kernelinclude) -c %f -o %o $(CFLAGS) $(CPPFLAGS) |>
-!ld = |> $(CC) --sysroot=&(sysroot) -T $(ARCHDIR)/linker.ld -o %o $(CFLAGS) %f -L&(libcresult) $(LIBS) |>
+!cc = |> $(CC) --sysroot=&(sysroot) -I&(include_libc) -I&(include_os) -c %f -o %o $(CFLAGS) $(CPPFLAGS) |>
+!ld = |> $(CC) --sysroot=&(sysroot) -T $(ARCHDIR)/linker.ld -o %o $(CFLAGS) %f -L&(libc) $(LIBS) |>
 !ar = |> $(AR) rcs %o %f |>

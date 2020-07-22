@@ -1,0 +1,8 @@
+include_rules
+
+: |> mkdir -p isodir/boot/grub |>
+
+: |> tools/iso_setup.sh |> isodir/boot/grub/grub.cfg {grubcfg}
+: &(os)/anthrax.kernel |> cp %f %o |> isodir/boot/%b {kernel}
+
+: {kernel} | {grubcfg} |> grub-mkrescue -o %o isodir |> anthrax.iso
