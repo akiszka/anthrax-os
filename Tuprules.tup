@@ -3,20 +3,11 @@
 HOSTARCH = i386
 ARCHDIR = arch/$(HOSTARCH)
 
-HOSTARCH = i386
-ARCHDIR = arch/$(HOSTARCH)
-
 &sysroot = sysroot
-&prefix = sysroot/usr
-&libdir = sysroot/usr/lib
-&includedir = sysroot/usr/include
 
 &libcinclude = libc/include
 &libcresult = libc/
 &kernelinclude = os/include
-
-PREFIX = /usr
-BOOTDIR = /boot
 
 CC = i686-elf-gcc
 AR = i686-elf-ar

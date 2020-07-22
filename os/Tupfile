@@ -12,4 +12,4 @@ LIBS += -lgcc
 
 : foreach $(ARCHDIR)/*.S $(ARCHDIR)/*.c |> !cc |> $(ARCHDIR)/%B.o
 
-: kernel/*.o $(ARCHDIR)/*.o | ../libc/libk.a |> !ld |> myos.kernel
+: kernel/*.o $(ARCHDIR)/*.o | ../libc/libk.a |> !ld |> anthrax.kernel
