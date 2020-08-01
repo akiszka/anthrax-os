@@ -7,9 +7,7 @@ LIBS += -lk
 LIBS += -lgcc
 
 : foreach kernel/*.S kernel/*.c |> !cc |> kernel/%B.o
-: |> cp `$(CC) -print-file-name=crtbegin.o` %o |> $(ARCHDIR)/crtbegin.o
-: |> cp `$(CC) -print-file-name=crtend.o` %o |> $(ARCHDIR)/crtend.o
 
 : foreach $(ARCHDIR)/*.S $(ARCHDIR)/*.c |> !cc |> $(ARCHDIR)/%B.o
 
-: kernel/*.o $(ARCHDIR)/*.o | &(libc)/libk.a |> !ld |> anthrax.kernel
+: kernel/*.o $(ARCHDIR)/*.o | &(libc)/libk.a $(ARCHDIR)/crt/*.o |> $(CC) -T $(ARCHDIR)/linker.ld -o %o $(CFLAGS) $(ARCHDIR)/crt/crti.o $(ARCHDIR)/crt/crtbegin.o %f $(ARCHDIR)/crt/crtend.o $(ARCHDIR)/crt/crtn.o -L&(libc) $(LIBS) |> anthrax.kernel

@@ -18,6 +18,5 @@ CFLAGS += -ffreestanding
 CFLAGS += -Wall
 CFLAGS += -Wextra
 
-!cc = |> $(CC) --sysroot=&(sysroot) -I&(include_libc) -I&(include_os) -c %f -o %o $(CFLAGS) $(CPPFLAGS) |>
-!ld = |> $(CC) --sysroot=&(sysroot) -T $(ARCHDIR)/linker.ld -o %o $(CFLAGS) %f -L&(libc) $(LIBS) |>
+!cc = |> $(CC) -I&(include_libc) -I&(include_os) -c %f -o %o $(CFLAGS) $(CPPFLAGS) |>
 !ar = |> $(AR) rcs %o %f |>

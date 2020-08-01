@@ -26,6 +26,7 @@ stack_top:
 _start:
 	movl $stack_top, %esp
 
+	# EAX and EBX contain arguments for kernel_main provided by GRUB. Push them now so they don't get messed up later.
 	push %eax
 	push %ebx
 

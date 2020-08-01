@@ -1,0 +1,6 @@
+include_rules
+
+: |> cp `$(CC) -print-file-name=crtbegin.o` %o |> crtbegin.o
+: |> cp `$(CC) -print-file-name=crtend.o` %o |> crtend.o
+
+: foreach *.S |> !cc |> %B.o
