@@ -3,11 +3,19 @@
 
 #include "gdt.h"
 
-static struct gdt_descriptor _gdt [MAX_DESCRIPTORS];
-static struct gdtr           _gdtr;
+struct gdt_descriptor _gdt [MAX_DESCRIPTORS];
+struct gdtr           _gdtr;
 
-void gdt_set_descriptor(uint32_t i, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags)
-{
+// Returns the GDT selector. I is the index, ring is the ring number 0-3
+uint16_t gdt_get_selector(uint16_t i, uint8_t ring) {
+	// Selector - bits: 0-1 - ring; 2 - true for LDT false for GDT; 3-15 - index
+	uint16_t selector = 0;
+	selector = (i & 0x1fff) << 3; // set the index, cut off the first 13 bits and shift
+	selector |= ring & 0x3; // set the ring
+	return selector;
+}
+
+void gdt_set_descriptor(uint16_t i, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
 	if (i > MAX_DESCRIPTORS)
 		return;
  
@@ -48,5 +56,5 @@ void gdt_initialize() {
 
 void gdt_install() {
 	// TODO: check if the "=m" here is right (it probably isn't)
-	__asm__ __volatile__("lgdt %0;\n" :"=m"(_gdtr));
+	asm __volatile__("lgdt _gdtr");
 }
