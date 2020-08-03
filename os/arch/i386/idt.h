@@ -5,7 +5,16 @@
 
 #define MAX_INTERRUPTS 256
 
-#define IDT_IRQ_HANDLER void*
+struct interrupt_frame
+{
+	uint32_t ip;
+	uint32_t cs;
+	uint32_t flags;
+	uint32_t sp;
+	uint32_t ss;
+};
+
+typedef void (*IDT_IRQ_HANDLER)(struct interrupt_frame*);
 
 struct idt_descriptor {
 	uint16_t		baseLo; // bits 0-15 of ir address
@@ -38,7 +47,8 @@ struct idtr { // idt pointer
 } __attribute__((packed));
 
 void idt_generate_interrupt(uint8_t n);
-void idt_default_ir();
+__attribute__ ((interrupt))
+void idt_default_ir(struct interrupt_frame* frame);
 
 int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IRQ_HANDLER handler);
 void idt_initialize();

@@ -20,9 +20,10 @@ void idt_generate_interrupt(uint8_t n) {
 		: "a"(n));
 }
 
-void idt_default_ir() {
+__attribute__ ((interrupt)) // Remember: don't use assembly preludes with this attribure.
+void idt_default_ir(struct interrupt_frame* frame) {
 	terminal_initialize();
-	printf("Unhandled interrupt.");
+	printf("Unhandled interrupt or exception.");
 	for(;;);
 }
 
@@ -44,7 +45,7 @@ int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IR
 void idt_initialize() {
 	_idtr.m_limit = sizeof (struct idt_descriptor) * MAX_INTERRUPTS-1;
 	_idtr.m_base = (uint32_t)_idt;
-
+	
 	memset((void*)_idt, 0, sizeof (struct idt_descriptor) * MAX_INTERRUPTS-1);
 	
 	uint16_t code_selector = gdt_get_selector(1, 0);

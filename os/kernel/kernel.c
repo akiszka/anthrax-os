@@ -34,3 +34,4 @@ void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
     entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
     }*/
 }
+

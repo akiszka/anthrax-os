@@ -17,6 +17,8 @@ CFLAGS += -g
 CFLAGS += -ffreestanding
 CFLAGS += -Wall
 CFLAGS += -Wextra
+# FIXME: only do this in files with interrupt handlers!
+CFLAGS += -mgeneral-regs-only -mno-red-zone
 
 !cc = |> $(CC) -I&(include_libc) -I&(include_os) -c %f -o %o $(CFLAGS) $(CPPFLAGS) |>
 !ar = |> $(AR) rcs %o %f |>

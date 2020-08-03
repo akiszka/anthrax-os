@@ -56,4 +56,16 @@ void gdt_initialize() {
 
 void gdt_install() {
 	asm __volatile__("lgdt _gdtr");
+	asm __volatile__(
+		"ljmp $0x8,$reload_cs;"
+		"reload_cs:"
+		"mov %1, %%ds;"
+		"mov %1, %%es;"
+		"mov %1, %%fs;"
+		"mov %1, %%gs;"
+		"mov %1, %%ss;"
+		:
+		: "i"(gdt_get_selector(1, 0)), // code segment selector
+		  "r"(gdt_get_selector(2, 0)) // data segment selector
+		);
 }
