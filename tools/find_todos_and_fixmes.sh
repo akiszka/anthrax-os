@@ -1,2 +1,2 @@
 #!/bin/sh
-grep -EIHnr --color --exclude-dir=tools 'TODO|FIXME' .
+grep -EIHnr --color --exclude-dir={tools,.git} 'TODO|FIXME' .

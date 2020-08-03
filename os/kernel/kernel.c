@@ -6,6 +6,8 @@
 #include <kernel/multiboot.h>
 
 void gdt_initialize();
+void idt_initialize();
+void idt_generate_interrupt(uint8_t n);
 
 void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
   terminal_initialize();  
@@ -13,9 +15,12 @@ void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
   if (MULTIBOOT_BOOTLOADER_MAGIC != magic) abort();
 
   gdt_initialize();
+  idt_initialize();
 
+  idt_generate_interrupt(5);
+
+  // TODO: create Hardware Abstraction Layer functions
   // TODO: create a debug_printf() function that only works if a debug macro is set
-  // TODO: create a script that scans the code and prints all the TODOS
   
   /*printf("Anthrax OS booted by %s.\n", mbt->boot_loader_name);
   printf("Hello, kernel World!\n");

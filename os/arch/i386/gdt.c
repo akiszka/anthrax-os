@@ -39,7 +39,7 @@ void gdt_set_descriptor(uint16_t i, uint32_t base, uint32_t limit, uint8_t acces
 
 void gdt_initialize() {
 	_gdtr.m_limit = (sizeof (struct gdt_descriptor) * MAX_DESCRIPTORS)-1;
-	_gdtr.m_base = (uint32_t)&_gdt[0];
+	_gdtr.m_base = (uint32_t) _gdt;
 
 	printf("GDT limit: 0x%x base: 0x%x\n\n", _gdtr.m_limit, _gdtr.m_base);
 	
@@ -55,6 +55,5 @@ void gdt_initialize() {
 }
 
 void gdt_install() {
-	// TODO: check if the "=m" here is right (it probably isn't)
 	asm __volatile__("lgdt _gdtr");
 }
