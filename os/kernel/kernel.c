@@ -17,15 +17,14 @@ void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
   gdt_initialize();
   idt_initialize();
 
-  idt_generate_interrupt(5);
+  //idt_generate_interrupt(5);
 
   // TODO: create Hardware Abstraction Layer functions
-  // TODO: create a debug_printf() function that only works if a debug macro is set
   
-  /*printf("Anthrax OS booted by %s.\n", mbt->boot_loader_name);
+  printf("Anthrax OS booted by %s.\n", mbt->boot_loader_name);
   printf("Hello, kernel World!\n");
   
-  printf("memory: %u\n", mbt->mem_upper + mbt->mem_lower);
+  /*printf("memory: %u\n", mbt->mem_upper + mbt->mem_lower);
   
   multiboot_memory_map_t* entry = (multiboot_memory_map_t*) mbt->mmap_addr;
   

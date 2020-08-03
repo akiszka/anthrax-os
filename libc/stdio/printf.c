@@ -32,10 +32,9 @@
  * The full source is located at https://github.com/mpredfearn/simple-printf/
  */
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdarg.h>
-
-int putchar(int c);
 
 static void simple_outputchar(char **str, char c)
 {
@@ -129,7 +128,7 @@ static int simple_outputi(char **out, long long i, int base, int sign, int width
 }
 
 
-static int simple_vsprintf(char **out, char *format, va_list ap)
+int vsprintf(char **out, char *format, va_list ap)
 {
 	int width, flags;
 	int pc = 0;
@@ -329,25 +328,25 @@ out:
 	return pc;
 }
 
-int simple_printf(char *fmt, ...)
+int printf(char *fmt, ...)
 {
 	va_list ap;
 	int r;
 
 	va_start(ap, fmt);
-	r = simple_vsprintf(NULL, fmt, ap);
+	r = vsprintf(NULL, fmt, ap);
 	va_end(ap);
 
 	return r;
 }
 
-int simple_sprintf(char *buf, char *fmt, ...)
+int sprintf(char *buf, char *fmt, ...)
 {
 	va_list ap;
 	int r;
 
 	va_start(ap, fmt);
-	r = simple_vsprintf(&buf, fmt, ap);
+	r = vsprintf(&buf, fmt, ap);
 	va_end(ap);
 
 	return r;

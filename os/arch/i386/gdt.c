@@ -33,15 +33,15 @@ void gdt_set_descriptor(uint16_t i, uint32_t base, uint32_t limit, uint8_t acces
 	_gdt[i].limitHi_flags = (limit >> 16) & 0x0f;
 	_gdt[i].limitHi_flags |= (flags & 0x0f) << 4;
 
-	printf("Setting descriptotr %u:\n base: %u\n limit: %u\n access: %u\n flags: %u\n", i, base, limit, access, flags);
-	printf("Result: %u %u %u %u %u %u\n\n", _gdt[i].limitLo, _gdt[i].baseLo, _gdt[i].baseMid, _gdt[i].access, _gdt[i].limitHi_flags, _gdt[i].baseHi);
+	debug_printf("Setting descriptotr %u: base: %u limit: %u access: %u flags: %u\n", i, base, limit, access, flags);
+	debug_printf("Result: %u %u %u %u %u %u\n", _gdt[i].limitLo, _gdt[i].baseLo, _gdt[i].baseMid, _gdt[i].access, _gdt[i].limitHi_flags, _gdt[i].baseHi);
 }
 
 void gdt_initialize() {
 	_gdtr.m_limit = (sizeof (struct gdt_descriptor) * MAX_DESCRIPTORS)-1;
 	_gdtr.m_base = (uint32_t) _gdt;
 
-	printf("GDT limit: 0x%x base: 0x%x\n\n", _gdtr.m_limit, _gdtr.m_base);
+	debug_printf("GDTR limit: 0x%x base: 0x%x\n", _gdtr.m_limit, _gdtr.m_base);
 	
 	gdt_set_descriptor(0, 0, 0, 0, 0); // null descriptor
 	gdt_set_descriptor(1, 0, 0xffffffff,

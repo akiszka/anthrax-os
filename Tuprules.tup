@@ -20,5 +20,7 @@ CFLAGS += -Wextra
 # FIXME: only do this in files with interrupt handlers!
 CFLAGS += -mgeneral-regs-only -mno-red-zone
 
+CPPFLAGS += -DDEBUG
+
 !cc = |> $(CC) -I&(include_libc) -I&(include_os) -c %f -o %o $(CFLAGS) $(CPPFLAGS) |>
 !ar = |> $(AR) rcs %o %f |>
