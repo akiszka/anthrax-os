@@ -54,18 +54,22 @@ void gdt_initialize() {
 	gdt_install();
 }
 
+__attribute__((optimize("O1"))) // I think I found a bug in GCC and this fixes it.
 void gdt_install() {
-	asm __volatile__("lgdt _gdtr");
-	asm __volatile__(
-		"ljmp $0x8,$reload_cs;"
-		"reload_cs:"
-		"mov %1, %%ds;"
-		"mov %1, %%es;"
-		"mov %1, %%fs;"
-		"mov %1, %%gs;"
-		"mov %1, %%ss;"
-		:
-		: "i"(gdt_get_selector(1, 0)), // code segment selector
-		  "r"(gdt_get_selector(2, 0)) // data segment selector
-		);
+    asm volatile ("lgdt _gdtr"); // load the GDT
+    asm volatile ( // load data segments
+	"mov %0, %%ds;"
+	"mov %0, %%es;"
+	"mov %0, %%fs;"
+	"mov %0, %%gs;"
+	"mov %0, %%ss;"
+	:
+	: "r"(gdt_get_selector(2, 0))
+	);
+    asm volatile ( // load code segment
+	"ljmp %0, $reload_cs;"
+	"reload_cs:"
+	:
+	: "i"(gdt_get_selector(1, 0))
+	);
 }
