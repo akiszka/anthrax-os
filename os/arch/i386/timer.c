@@ -49,8 +49,8 @@ uint64_t pit_get_ticks() {
 __attribute__ ((interrupt))
 void pit_ir_timer(struct interrupt_frame* frame) {
     _pit_ticks++;
-    if (_pit_ticks % 100 == 0) {
-	debug_printf("sec: %lld\n", _pit_ticks/100);
+    if (_pit_ticks % 4000 == 0) {
+	debug_printf("Running for (sec): %lld\n", _pit_ticks/100);
     }
     outb(PIC_PRIMARY_REG_CMD_STAT, PIC_OCW2_EOI);
 }

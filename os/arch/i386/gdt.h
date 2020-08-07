@@ -49,7 +49,10 @@ struct gdt_descriptor {
 #define GDT_FLAG_32_BIT 0x4
 #define GDT_FLAG_4_KiB_LIMIT 0x8
 
-inline uint16_t gdt_get_selector(uint16_t i, uint8_t ring);
+// Returns the GDT selector. I is the index, ring is the ring number 0-3
+// Selector - bits: 0-1 - ring; 2 - true for LDT false for GDT; 3-15 - index
+#define gdt_get_selector(i, ring) ( ( (i & 0x1fff) << 3 ) | (ring & 0x3) )
+
 void gdt_set_descriptor(uint16_t i, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags);
 void gdt_initialize();
 void gdt_install();

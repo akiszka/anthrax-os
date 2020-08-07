@@ -6,15 +6,6 @@
 struct gdt_descriptor _gdt [MAX_DESCRIPTORS];
 struct gdtr           _gdtr;
 
-// Returns the GDT selector. I is the index, ring is the ring number 0-3
-uint16_t gdt_get_selector(uint16_t i, uint8_t ring) {
-	// Selector - bits: 0-1 - ring; 2 - true for LDT false for GDT; 3-15 - index
-	uint16_t selector = 0;
-	selector = (i & 0x1fff) << 3; // set the index, cut off the first 13 bits and shift
-	selector |= ring & 0x3; // set the ring
-	return selector;
-}
-
 void gdt_set_descriptor(uint16_t i, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
 	if (i > MAX_DESCRIPTORS)
 		return;
@@ -54,23 +45,19 @@ void gdt_initialize() {
 	gdt_install();
 }
 
-__attribute__((optimize("O0"))) // I think I found a bug in GCC and this fixes it.
+__attribute__ ((optimize("O0"))) // I think I found a bug in GCC and this fixes it.
 void gdt_install() {
-    asm volatile ("lgdt _gdtr"); // load the GDT
-    asm volatile ( // load data segments
-	"mov %0, %%ds;"
+    asm volatile ( 
+	"lgdt _gdtr;" // load the GDT
+	"mov %0, %%ds;" // load data segments
 	"mov %0, %%es;"
 	"mov %0, %%fs;"
 	"mov %0, %%gs;"
 	"mov %0, %%ss;"
-	:
-	: "r"(gdt_get_selector(2, 0))
-	);
-    // FIXME: make this interactive
-    asm volatile ( // load code segment
-	"ljmp $0x8, $reload_cs;"
+	"ljmp %1, $reload_cs;" // load code segment
 	"reload_cs:"
 	:
-//	: "i"(gdt_get_selector(1, 0))
+	: "r"(gdt_get_selector(2, 0)),
+	  "i"(gdt_get_selector(1, 0))
 	);
 }
