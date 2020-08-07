@@ -36,9 +36,18 @@ uint8_t terminal_getcolor() {
 }
 
 void terminal_newline(void) {
+    for (size_t x = terminal_column; x < VGA_WIDTH; ++x) // erase the rest of the line
+	terminal_putentryat(' ', 0, x, terminal_row);
     terminal_column = 0;
-    if (++terminal_row == VGA_HEIGHT)
-	terminal_row = 0;
+
+    // this is probably wrong and it breaks some memory...
+    if (terminal_row == VGA_HEIGHT) { // at the end of the terminal, scroll up
+	memcpy(terminal_buffer,
+	       terminal_buffer + VGA_WIDTH,
+	       VGA_WIDTH*VGA_HEIGHT*2);
+    } else {
+	++terminal_row;
+    }
 }
 
 void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y) {
