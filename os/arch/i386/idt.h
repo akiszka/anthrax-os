@@ -90,20 +90,20 @@ R Bit	SL Bit	EOI Bit	Description
 #define PIC_OCW2_R   0x80 // rotation
 
 // The following  devices use PIC 1 to generate interrupts
-#define PIC_IRQ_TIMER     0
-#define PIC_IRQ_KEYBOARD  1
-#define PIC_IRQ_SERIAL2   3
-#define PIC_IRQ_SERIAL1   4
-#define PIC_IRQ_PARALLEL2 5
-#define PIC_IRQ_DISKETTE  6
-#define PIC_IRQ_PARALLEL1 7
+#define PIC1_IRQ_TIMER     0+32 // (the interrupts from PIC1 are mapped to 32-39)
+#define PIC1_IRQ_KEYBOARD  1+32
+#define PIC1_IRQ_SERIAL2   3+32
+#define PIC1_IRQ_SERIAL1   4+32
+#define PIC1_IRQ_PARALLEL2 5+32
+#define PIC1_IRQ_DISKETTE  6+32
+#define PIC1_IRQ_PARALLEL1 7+32
  
 // The following devices use PIC 2 to generate interrupts
-#define PIC_IRQ_CMOSTIMER  0
-#define PIC_IRQ_CGARETRACE 1
-#define PIC_IRQ_AUXILIARY  4
-#define PIC_IRQ_FPU        5
-#define PIC_IRQ_HDC        6
+#define PIC2_IRQ_CMOSTIMER  0+40 // (the interrupts from PIC2 are mapped to 40-47)
+#define PIC2_IRQ_CGARETRACE 1+40
+#define PIC2_IRQ_AUXILIARY  4+40
+#define PIC2_IRQ_FPU        5+40
+#define PIC2_IRQ_HDC        6+40
 
 void idt_generate_interrupt(uint8_t n);
 int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IRQ_HANDLER handler);

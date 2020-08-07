@@ -8,6 +8,7 @@
 #include "gdt.h"
 
 void idt_install();
+
 __attribute__ ((interrupt)) void idt_default_software_ir(struct interrupt_frame* frame);
 __attribute__ ((interrupt)) void idt_default_pic1_ir(struct interrupt_frame* frame);
 __attribute__ ((interrupt)) void idt_default_pic2_ir(struct interrupt_frame* frame);

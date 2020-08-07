@@ -8,6 +8,7 @@
 void gdt_initialize();
 void idt_initialize();
 void pic_initialize();
+void pit_initialize();
 void idt_generate_interrupt(uint8_t n);
 
 void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
@@ -18,6 +19,7 @@ void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
   gdt_initialize();
   idt_initialize();
   pic_initialize();
+  pit_initialize();
   
   asm volatile ("sti":::"memory");
   
