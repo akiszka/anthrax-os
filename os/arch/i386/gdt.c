@@ -54,7 +54,7 @@ void gdt_initialize() {
 	gdt_install();
 }
 
-__attribute__((optimize("O1"))) // I think I found a bug in GCC and this fixes it.
+__attribute__((optimize("O0"))) // I think I found a bug in GCC and this fixes it.
 void gdt_install() {
     asm volatile ("lgdt _gdtr"); // load the GDT
     asm volatile ( // load data segments
@@ -66,10 +66,11 @@ void gdt_install() {
 	:
 	: "r"(gdt_get_selector(2, 0))
 	);
+    // FIXME: make this interactive
     asm volatile ( // load code segment
-	"ljmp %0, $reload_cs;"
+	"ljmp $0x8, $reload_cs;"
 	"reload_cs:"
 	:
-	: "i"(gdt_get_selector(1, 0))
+//	: "i"(gdt_get_selector(1, 0))
 	);
 }

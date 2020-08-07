@@ -46,12 +46,68 @@ struct idtr { // idt pointer
 	uint32_t		m_base; // idt base address
 } __attribute__((packed));
 
-void idt_generate_interrupt(uint8_t n);
-__attribute__ ((interrupt))
-void idt_default_ir(struct interrupt_frame* frame);
+#define PIC_PRIMARY_REG_CMD_STAT 0x20
+#define PIC_PRIMARY_REG_DATA_MASK 0x21
 
+#define PIC_SECONDARY_REG_CMD_STAT 0xA0
+#define PIC_SECONDARY_REG_DATA_MASK 0xA1
+
+#define PIC_ICW1_IC4  0x01 // whether to expect ICW4
+#define PIC_ICW1_SNGL 0x02 // set if only one PIC in the system (NOT in x86)
+#define PIC_ICW1_ADI  0x04 // ignored on x86, do not set
+#define PIC_ICW1_LTIM 0x08 // set for level triggered, unset for edge triggered
+#define PIC_ICW1_INIT 0x10 // set to initialize the PIC
+
+#define PIC_ICW2_PRIMARY   0x20 // map ints 32-39 to PIC1
+#define PIC_ICW2_SECONDARY 0x28 // map ints 40-47 to PIC2
+
+#define PIC_ICW3_PRIMARY   0x04 // IR line 2 for communication, it just is like that on x86
+#define PIC_ICW3_SECONDARY 0x02 // IR line 2 for communication, it just is like that on x86
+
+#define PIC_ICW4_uPM  0x01 // set if x86 mode
+#define PIC_ICW4_AEOI 0x02 // PIC will automatically perform EOI on last int ack pulse
+#define PIC_ICW4_MS   0x04 // only use if BUF is set, if this is set, selects buffer master
+#define PIC_ICW4_BUF  0x08 // set for buffered mode
+#define PIC_ICW4_SFNM 0x10 // set for special fully nested mode, do not use on x86
+
+#define PIC_OCW1_MASK(irq) (1 << irq) // mask an interrupt
+
+/* 
+   OCW2 COMMANDS
+R Bit	SL Bit	EOI Bit	Description
+0	0	0	Rotate in Automatic EOI mode (CLEAR)
+0	0	1	Non specific EOI command
+0	1	0	No operation
+0	1	1	Specific EOI command
+1	0	0	Rotate in Automatic EOI mode (SET)
+1	0	1	Rotate on non specific EOI
+1	1	0	Set priority command
+1	1	1	Rotate on specific EOI
+ */
+#define PIC_OCW2_L(level) (level & 0x03) // int level upon which to react
+#define PIC_OCW2_EOI 0x20 // end of interrupt signal
+#define PIC_OCW2_SL  0x40 // selection
+#define PIC_OCW2_R   0x80 // rotation
+
+// The following  devices use PIC 1 to generate interrupts
+#define PIC_IRQ_TIMER     0
+#define PIC_IRQ_KEYBOARD  1
+#define PIC_IRQ_SERIAL2   3
+#define PIC_IRQ_SERIAL1   4
+#define PIC_IRQ_PARALLEL2 5
+#define PIC_IRQ_DISKETTE  6
+#define PIC_IRQ_PARALLEL1 7
+ 
+// The following devices use PIC 2 to generate interrupts
+#define PIC_IRQ_CMOSTIMER  0
+#define PIC_IRQ_CGARETRACE 1
+#define PIC_IRQ_AUXILIARY  4
+#define PIC_IRQ_FPU        5
+#define PIC_IRQ_HDC        6
+
+void idt_generate_interrupt(uint8_t n);
 int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IRQ_HANDLER handler);
 void idt_initialize();
-void idt_install();
+void pic_initialize();
 
 #endif // ARCH_I386_IDT_H

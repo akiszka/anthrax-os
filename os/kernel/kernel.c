@@ -7,6 +7,7 @@
 
 void gdt_initialize();
 void idt_initialize();
+void pic_initialize();
 void idt_generate_interrupt(uint8_t n);
 
 void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
@@ -16,13 +17,16 @@ void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
 
   gdt_initialize();
   idt_initialize();
-
+  pic_initialize();
+  
+  asm volatile ("sti":::"memory");
+  
   //idt_generate_interrupt(5);
 
   // TODO: create Hardware Abstraction Layer functions
   
-  printf("Anthrax OS booted by %s.\n", mbt->boot_loader_name);
-  printf("Hello, kernel World!\n");
+  //printf("Anthrax OS booted by %s.\n", mbt->boot_loader_name);
+  //printf("Hello, kernel World!\n");
   
   /*printf("memory: %u\n", mbt->mem_upper + mbt->mem_lower);
   
@@ -32,5 +36,7 @@ void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
     printf("mem entry: %llx, length %llx, type %x\n", entry->addr, entry->len, entry->type);
     entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
     }*/
+
+  while(1);
 }
 
