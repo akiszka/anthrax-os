@@ -34,7 +34,7 @@
 #define PIT_OCW_SC2     0x80 // select counter 2
 
 // * FUNCTIONS *
-void pit_initialize();
+void pit_initialize(uint16_t code_selector);
 void pit_set_counter(uint8_t counter, uint8_t mode, uint32_t freq);
 uint64_t pit_get_ticks();
 

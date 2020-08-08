@@ -5,13 +5,10 @@
 
 #include "cpu.h"
 #include "idt.h"
-#include "gdt.h"
 
 void idt_install();
 
-__attribute__ ((interrupt)) void idt_default_software_ir(struct interrupt_frame* frame);
-__attribute__ ((interrupt)) void idt_default_pic1_ir(struct interrupt_frame* frame);
-__attribute__ ((interrupt)) void idt_default_pic2_ir(struct interrupt_frame* frame);
+__attribute__ ((interrupt)) void idt_default_ir(struct interrupt_frame* frame);
 __attribute__ ((interrupt)) void idt_ir_divide_by_zero(struct interrupt_frame* frame);
 __attribute__ ((interrupt)) void idt_ir_single_step(struct interrupt_frame* frame);
 __attribute__ ((interrupt)) void idt_ir_non_maskable_interrupt(struct interrupt_frame* frame);
@@ -37,7 +34,7 @@ struct idtr              _idtr;
 
 void idt_generate_interrupt(uint8_t n) {
     // above code modifies the 0 to int number to generate
-    asm __volatile__(
+    asm volatile (
 	"movb %%al, genint+1;"
 	"jmp genint;"
 	"genint:"
@@ -61,13 +58,11 @@ int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IR
     return 0;
 }
 
-void idt_initialize() {
+void idt_initialize(uint16_t code_selector) {
     _idtr.m_limit = sizeof (struct idt_descriptor) * MAX_INTERRUPTS-1;
     _idtr.m_base = (uint32_t)_idt;
 	
     memset((void*)_idt, 0, sizeof (struct idt_descriptor) * MAX_INTERRUPTS-1);
-	
-    uint16_t code_selector = gdt_get_selector(1, 0);
 
     idt_set_descriptor(0, code_selector, IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
 			   idt_ir_divide_by_zero);
@@ -108,22 +103,10 @@ void idt_initialize() {
     idt_set_descriptor(18, code_selector, IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
 			   idt_ir_machine_check);
 
-    for(uint16_t i = 19; i < 32; ++i)
+    for(uint16_t i = 19; i < MAX_INTERRUPTS; ++i)
 	idt_set_descriptor(i, code_selector,
 			   IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
-			   idt_default_software_ir);
-    for(uint16_t i = 32; i < 40; ++i)
-	idt_set_descriptor(i, code_selector,
-			   IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
-			   idt_default_pic1_ir);
-    for(uint16_t i = 40; i < 48; ++i)
-	idt_set_descriptor(i, code_selector,
-			   IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
-			   idt_default_pic2_ir);
-    for(uint16_t i = 48; i < MAX_INTERRUPTS; ++i)
-	idt_set_descriptor(i, code_selector,
-			   IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
-			   idt_default_software_ir);
+			   idt_default_ir);
     
     idt_install();
 }
@@ -146,26 +129,20 @@ void pic_initialize() {
     outb(PIC_SECONDARY_REG_DATA_MASK, PIC_ICW4_uPM); io_wait();
 }
 
-__attribute__ ((interrupt)) // Remember: don't use assembly preludes with this attribure.
-void idt_default_software_ir(struct interrupt_frame* frame) {
-    //terminal_initialize();
+void pic_end_interrupt(uint8_t number) {
+    if (PIC1_IRQ_BASE <= number < PIC2_IRQ_BASE) {
+	outb(PIC_PRIMARY_REG_CMD_STAT, PIC_OCW2_EOI);
+    } else if (PIC2_IRQ_BASE <= number < (PIC2_IRQ_BASE+7)) {
+	outb(PIC_PRIMARY_REG_CMD_STAT,   PIC_OCW2_EOI);
+	outb(PIC_SECONDARY_REG_CMD_STAT, PIC_OCW2_EOI);
+    }
+}
+
+__attribute__ ((interrupt))
+void idt_default_ir(struct interrupt_frame* frame) {
     debug_printf("Unhandled interrupt or exception.\n");
     for(;;);
 }
-
-__attribute__ ((interrupt))
-void idt_default_pic1_ir(struct interrupt_frame* frame) {
-    debug_printf("Unhandled hardware interrupt on PIC1.\n");
-    outb(PIC_PRIMARY_REG_CMD_STAT, PIC_OCW2_EOI);
-}
-
-__attribute__ ((interrupt))
-void idt_default_pic2_ir(struct interrupt_frame* frame) {
-    debug_printf("Unhandled hardware interrupt on PIC2.\n");
-    outb(PIC_PRIMARY_REG_CMD_STAT,   PIC_OCW2_EOI);
-    outb(PIC_SECONDARY_REG_CMD_STAT, PIC_OCW2_EOI);
-}
-
 __attribute__ ((interrupt))
 void idt_ir_divide_by_zero(struct interrupt_frame* frame) {
     debug_printf("[INT] Divide by zero!\n");

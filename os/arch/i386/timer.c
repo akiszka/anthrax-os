@@ -8,8 +8,7 @@ static uint64_t _pit_ticks=0;
 
 __attribute__ ((interrupt)) void pit_ir_timer(struct interrupt_frame* frame);
 
-void pit_initialize() {
-    uint16_t code_selector = gdt_get_selector(1, 0);
+void pit_initialize(uint16_t code_selector) {
     idt_set_descriptor(PIC1_IRQ_TIMER, code_selector,
 		       IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
 		       pit_ir_timer);
@@ -52,5 +51,5 @@ void pit_ir_timer(struct interrupt_frame* frame) {
     if (_pit_ticks % 4000 == 0) {
 	debug_printf("Running for (sec): %lld\n", _pit_ticks/100);
     }
-    outb(PIC_PRIMARY_REG_CMD_STAT, PIC_OCW2_EOI);
+    pic_end_interrupt(PIC1_IRQ_TIMER);
 }
