@@ -25,6 +25,8 @@ void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
 	entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
     }
 
-    while(1);
+    while(1) {
+	printf("read key: %c\n", getch());
+    }
 }
 

@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-#include "gdt.h"
 #include "idt.h"
 #include "timer.h"
 
