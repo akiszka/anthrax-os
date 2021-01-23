@@ -1,6 +1,8 @@
 #ifndef ARCH_I386_KEYBOARD_H
 #define ARCH_I386_KEYBOARD_H
 
+#include <stdint.h>
+
 #define KEYBOARD_REG_CMD_STATUS 0x64
 #define KEYBOARD_REG_DATA 0x60
 

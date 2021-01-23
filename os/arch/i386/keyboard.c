@@ -53,8 +53,8 @@ uint8_t keybord_wait_for_key() {
 __attribute__ ((interrupt))
 void keyboard_ir(struct interrupt_frame* frame) {
     if (_waiting_for_keys) {
-	if (inb(KEYBOARD_REG_CMD_STATUS) & KEYBOARD_FLAG_SCANCODE_READ) { // is there data to read
-	    _scancode = inb(KEYBOARD_REG_DATA);
+	if (in8(KEYBOARD_REG_CMD_STATUS) & KEYBOARD_FLAG_SCANCODE_READ) { // is there data to read
+	    _scancode = in8(KEYBOARD_REG_DATA);
 	}
     }
     pic_end_interrupt(PIC1_IRQ_KEYBOARD);

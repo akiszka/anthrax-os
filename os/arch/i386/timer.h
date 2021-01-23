@@ -1,6 +1,8 @@
 #ifndef ARCH_I386_TIMER_H
 #define ARCH_I386_TIMER_H
 
+#include <stdint.h>
+
 // * MISC *
 #define PIT_INPUT_FREQ 1193180
 
@@ -16,7 +18,7 @@
 
 #define PIT_OCW_MASK_MODE        0x0E // bits 1-3: counter mode
 #define PIT_OCW_INTERRUPT_COUNT  0x00
-#define PIT_OCW_ONESHOT          0x02 
+#define PIT_OCW_ONESHOT          0x02
 #define PIT_OCW_RATE_GEN         0x04 // use this for a system clock
 #define PIT_OCW_SQUAREWAVE_GEN   0x06 // use this for a speaker
 #define PIT_OCW_SOFTWARE_STROBE  0x08

@@ -38,7 +38,7 @@ void idt_generate_interrupt(uint8_t n) {
 	"movb %%al, genint+1;"
 	"jmp genint;"
 	"genint:"
-	"int $0;"	
+	"int $0;"
 	:
 	: "a"(n));
 }
@@ -48,7 +48,7 @@ int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IR
     if (!handler) return -1;
 
     uint32_t base = (uint32_t)&(*handler);
-	
+
     _idt[i].baseLo = base & 0xffff;
     _idt[i].baseHi = (base >> 16) & 0xffff;
     _idt[i].sel = code_selector;
@@ -61,7 +61,7 @@ int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IR
 void idt_initialize(uint16_t code_selector) {
     _idtr.m_limit = sizeof (struct idt_descriptor) * MAX_INTERRUPTS-1;
     _idtr.m_base = (uint32_t)_idt;
-	
+
     memset((void*)_idt, 0, sizeof (struct idt_descriptor) * MAX_INTERRUPTS-1);
 
     idt_set_descriptor(0, code_selector, IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
@@ -107,7 +107,7 @@ void idt_initialize(uint16_t code_selector) {
 	idt_set_descriptor(i, code_selector,
 			   IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
 			   idt_default_ir);
-    
+
     idt_install();
 }
 
@@ -116,25 +116,26 @@ void idt_install() {
 }
 
 void pic_initialize() {
-    outb(PIC_PRIMARY_REG_CMD_STAT,   PIC_ICW1_IC4 | PIC_ICW1_INIT); io_wait();
-    outb(PIC_SECONDARY_REG_CMD_STAT, PIC_ICW1_IC4 | PIC_ICW1_INIT); io_wait();
-    
-    outb(PIC_PRIMARY_REG_DATA_MASK,   PIC_ICW2_PRIMARY); io_wait();
-    outb(PIC_SECONDARY_REG_DATA_MASK, PIC_ICW2_SECONDARY); io_wait();
-    
-    outb(PIC_PRIMARY_REG_DATA_MASK,   PIC_ICW3_PRIMARY); io_wait();
-    outb(PIC_SECONDARY_REG_DATA_MASK, PIC_ICW3_SECONDARY); io_wait();
-    
-    outb(PIC_PRIMARY_REG_DATA_MASK,   PIC_ICW4_uPM); io_wait();
-    outb(PIC_SECONDARY_REG_DATA_MASK, PIC_ICW4_uPM); io_wait();
+    out8(PIC_PRIMARY_REG_CMD_STAT,   PIC_ICW1_IC4 | PIC_ICW1_INIT); io_wait();
+    out8(PIC_SECONDARY_REG_CMD_STAT, PIC_ICW1_IC4 | PIC_ICW1_INIT); io_wait();
+
+    out8(PIC_PRIMARY_REG_DATA_MASK,   PIC_ICW2_PRIMARY); io_wait();
+    out8(PIC_SECONDARY_REG_DATA_MASK, PIC_ICW2_SECONDARY); io_wait();
+
+    out8(PIC_PRIMARY_REG_DATA_MASK,   PIC_ICW3_PRIMARY); io_wait();
+    out8(PIC_SECONDARY_REG_DATA_MASK, PIC_ICW3_SECONDARY); io_wait();
+
+    out8(PIC_PRIMARY_REG_DATA_MASK,   PIC_ICW4_uPM); io_wait();
+    out8(PIC_SECONDARY_REG_DATA_MASK, PIC_ICW4_uPM); io_wait();
 }
 
 void pic_end_interrupt(uint8_t number) {
+    // TODO: fix this - this comparison doesn't work!
     if (PIC1_IRQ_BASE <= number < PIC2_IRQ_BASE) {
-	outb(PIC_PRIMARY_REG_CMD_STAT, PIC_OCW2_EOI);
+	out8(PIC_PRIMARY_REG_CMD_STAT, PIC_OCW2_EOI);
     } else if (PIC2_IRQ_BASE <= number < (PIC2_IRQ_BASE+7)) {
-	outb(PIC_PRIMARY_REG_CMD_STAT,   PIC_OCW2_EOI);
-	outb(PIC_SECONDARY_REG_CMD_STAT, PIC_OCW2_EOI);
+	out8(PIC_PRIMARY_REG_CMD_STAT,   PIC_OCW2_EOI);
+	out8(PIC_SECONDARY_REG_CMD_STAT, PIC_OCW2_EOI);
     }
 }
 
@@ -237,4 +238,3 @@ void idt_ir_machine_check(struct interrupt_frame* frame) {
     debug_printf("[INT] Machine check!\n");
     for(;;);
 }
-
