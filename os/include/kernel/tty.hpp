@@ -3,7 +3,8 @@
 
 #include <types.hpp>
 
-enum vga_color {
+namespace tty {
+    enum vga_color {
 	VGA_COLOR_BLACK = 0,
 	VGA_COLOR_BLUE = 1,
 	VGA_COLOR_GREEN = 2,
@@ -20,22 +21,25 @@ enum vga_color {
 	VGA_COLOR_LIGHT_MAGENTA = 13,
 	VGA_COLOR_LIGHT_BROWN = 14,
 	VGA_COLOR_WHITE = 15,
-};
+    };
 
-void terminal_initialize(void);
-void terminal_setcolor(uint8_t color);
-u8 terminal_getcolor();
-void terminal_putchar(char c);
-void terminal_write(const char* data, size_t size);
-void terminal_writestring(const char* data);
+    void initialize(void);
+    void setcolor(uint8_t color);
+    u8 getcolor();
+    void putchar(char c);
+    void write(const char* data, size_t size);
+    void writestring(const char* data);
 
-static inline u8 vga_entry_color(enum vga_color fg, enum vga_color bg) {
+    void putentryat(unsigned char c, u8 color, size_t x, size_t y);
+    void newline(void);
+
+    static inline u8 vga_entry_color(enum vga_color fg, enum vga_color bg) {
 	return fg | bg << 4;
-}
+    }
 
-static inline u16 vga_entry(unsigned char uc, u8 color) {
+    static inline u16 vga_entry(unsigned char uc, u8 color) {
 	return (u16) uc | (u16) color << 8;
+    }
 }
-
 
 #endif

@@ -5,9 +5,11 @@
 
 #include "multiboot.h"
 
-void hal_system_startup(multiboot_info_t* mbt);
-void hal_system_shutdown();
+namespace hal {
+    void system_startup(multiboot_info_t* mbt);
+    void system_shutdown();
 
-u8 getch();
+    u8 getch();
+}
 
 #endif // _KERNEL_HAL_H

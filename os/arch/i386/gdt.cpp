@@ -3,15 +3,15 @@
 
 #include "gdt.hpp"
 
-struct gdt_descriptor _gdt [MAX_DESCRIPTORS];
-struct gdtr           _gdtr;
+struct gdt::descriptor _gdt [gdt::MAX_DESCRIPTORS];
+struct gdt::gdtr       _gdtr;
 
-void gdt_set_descriptor(u16 i, u32 base, u32 limit, u8 access, u8 flags) {
+void gdt::set_descriptor(u16 i, u32 base, u32 limit, u8 access, u8 flags) {
 	if (i > MAX_DESCRIPTORS)
 		return;
 
 	// null out the descriptor
-	memset ((void*)&_gdt[i], 0, sizeof (struct gdt_descriptor));
+	memset ((void*)&_gdt[i], 0, sizeof (struct descriptor));
 
 	// set limit and base addresses
 	_gdt[i].baseLo	= base & 0xffff;
@@ -25,25 +25,25 @@ void gdt_set_descriptor(u16 i, u32 base, u32 limit, u8 access, u8 flags) {
 	_gdt[i].limitHi_flags |= (flags & 0x0f) << 4;
 }
 
-void gdt_initialize() {
-	_gdtr.m_limit = (sizeof (struct gdt_descriptor) * MAX_DESCRIPTORS)-1;
+void gdt::initialize() {
+	_gdtr.m_limit = (sizeof (struct descriptor) * MAX_DESCRIPTORS)-1;
 	_gdtr.m_base = (u32)(address) _gdt;
 
 	debug_printf("GDTR limit: 0x%x base: 0x%x\n", _gdtr.m_limit, _gdtr.m_base);
 
-	gdt_set_descriptor(0, 0, 0, 0, 0); // null descriptor
-	gdt_set_descriptor(1, 0, 0xffffffff,
-			   GDT_ACCESS_RW | GDT_ACCESS_DC | GDT_ACCESS_Ex | GDT_ACCESS_S | GDT_ACCESS_Present,
-			   GDT_FLAG_32_BIT | GDT_FLAG_4_KiB_LIMIT); // code descriptor
-	gdt_set_descriptor(2, 0, 0xffffffff,
-			   GDT_ACCESS_RW | GDT_ACCESS_S | GDT_ACCESS_Present,
-			   GDT_FLAG_4_KiB_LIMIT | GDT_FLAG_32_BIT); // data descriptor
+	set_descriptor(0, 0, 0, 0, 0); // null descriptor
+	set_descriptor(1, 0, 0xffffffff,
+			   ACCESS_RW | ACCESS_DC | ACCESS_Ex | ACCESS_S | ACCESS_Present,
+			   FLAG_32_BIT | FLAG_4_KiB_LIMIT); // code descriptor
+	set_descriptor(2, 0, 0xffffffff,
+			   ACCESS_RW | ACCESS_S | ACCESS_Present,
+			   FLAG_4_KiB_LIMIT | FLAG_32_BIT); // data descriptor
 
-	gdt_install();
+	install();
 }
 
 __attribute__ ((optimize("O0"))) // I think I found a bug in GCC and this fixes it.
-void gdt_install() {
+void gdt::install() {
     asm volatile (
 	"lgdt _gdtr;" // load the GDT
 	"mov %0, %%ds;" // load data segments
@@ -54,7 +54,7 @@ void gdt_install() {
 	"ljmp %1, $reload_cs;" // load code segment
 	"reload_cs:"
 	:
-	: "r"(gdt_get_selector(2, 0)),
-	  "i"(gdt_get_selector(1, 0))
+	: "r"(get_selector(2, 0)),
+	  "i"(get_selector(1, 0))
 	);
 }

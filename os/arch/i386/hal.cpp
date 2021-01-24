@@ -7,18 +7,17 @@
 #include <kernel/physical_memory.hpp>
 #include <kernel/hal.hpp>
 
-void hal_system_startup(multiboot_info_t* mbt) {
-    gdt_initialize(); // set up the GDT
+void hal::system_startup(multiboot_info_t* mbt) {
+    gdt::initialize(); // set up the GDT
+    u16 code_selector = gdt::get_selector(1, 0);
 
-    u16 code_selector = gdt_get_selector(1, 0);
+    idt::initialize(code_selector); // set up the IDT
+    idt::pic_initialize(); // set up the interrupt controller
+    timer::initialize(code_selector); // set up the timer
 
-    idt_initialize(code_selector); // set up the IDT
-    pic_initialize(); // set up the interrupt controller
-    pit_initialize(code_selector); // set up the timer
+    keyboard::initialize(code_selector); // sey up the keyboard
 
-    keyboard_initialize(code_selector); // sey up the keyboard
-
-    pmmgr_initialize();
+    pmmgr::initialize();
     {
 	multiboot_memory_map_t* entry = (multiboot_memory_map_t*) mbt->mmap_addr;
 	while((address)entry < mbt->mmap_addr + mbt->mmap_length) {
@@ -31,23 +30,23 @@ void hal_system_startup(multiboot_info_t* mbt) {
 	    address addr = entry->addr;
 	    size_t size = entry->len;
 	    if (entry->type == 1) {
-		pmmgr_set_region_unused(addr, size);
+		pmmgr::set_region_unused(addr, size);
 	    } else {
-		pmmgr_set_region_used(addr, size);
+		pmmgr::set_region_used(addr, size);
 	    }
 
 	    entry = (multiboot_memory_map_t*) ((address)entry + entry->size + sizeof(entry->size));
 	}
     }
-    pmmgr_complete_initialization();
+    pmmgr::complete_initialization();
 
     asm volatile ("sti":::"memory");
 }
 
-void hal_system_shutdown() {
+void hal::system_shutdown() {
 
 }
 
-uint8_t getch() {
-    return keybord_wait_for_key();
+uint8_t hal::getch() {
+    return keyboard::wait_for_key();
 }

@@ -13,7 +13,7 @@ static size_t terminal_column;
 static u8 terminal_color;
 static u16* terminal_buffer;
 
-void terminal_initialize(void) {
+void tty::initialize(void) {
     terminal_row = 0;
     terminal_column = 0;
     terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
@@ -26,22 +26,22 @@ void terminal_initialize(void) {
     }
 }
 
-void terminal_setcolor(u8 color) {
+void tty::setcolor(u8 color) {
     terminal_color = color;
 }
 
-u8 terminal_getcolor() {
+u8 tty::getcolor() {
     return terminal_color;
 }
 
-void terminal_putentryat(unsigned char c, u8 color, size_t x, size_t y) {
+void tty::putentryat(unsigned char c, u8 color, size_t x, size_t y) {
     const size_t index = y * VGA_WIDTH + x;
     terminal_buffer[index] = vga_entry(c, color);
 }
 
-void terminal_newline(void) {
+void tty::newline(void) {
     for (size_t x = terminal_column; x < VGA_WIDTH; ++x) // erase the rest of the line
-	terminal_putentryat(' ', 0, x, terminal_row);
+	putentryat(' ', 0, x, terminal_row);
     terminal_column = 0;
 
     // this is probably wrong and it breaks some memory...
@@ -54,24 +54,24 @@ void terminal_newline(void) {
     }
 }
 
-void terminal_putchar(char c) {
+void tty::putchar(char c) {
     unsigned char uc = c;
     if (c == '\n') {
-	terminal_newline();
+	newline();
 	return;
     }
 
-    terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
+    putentryat(uc, terminal_color, terminal_column, terminal_row);
     if (++terminal_column == VGA_WIDTH) {
-	terminal_newline();
+	newline();
     }
 }
 
-void terminal_write(const char* data, size_t size) {
+void tty::write(const char* data, size_t size) {
     for (size_t i = 0; i < size; i++)
-	terminal_putchar(data[i]);
+	putchar(data[i]);
 }
 
-void terminal_writestring(const char* data) {
-    terminal_write(data, strlen(data));
+void tty::writestring(const char* data) {
+    write(data, strlen(data));
 }

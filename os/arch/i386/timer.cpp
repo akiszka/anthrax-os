@@ -8,15 +8,15 @@ static u64 _pit_ticks=0;
 
 __attribute__ ((interrupt)) void pit_ir_timer(struct interrupt_frame* frame);
 
-void pit_initialize(u16 code_selector) {
-    idt_set_descriptor(PIC1_IRQ_TIMER, code_selector,
-		       IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
-		       pit_ir_timer);
+void timer::initialize(u16 code_selector) {
+    idt::set_descriptor(idt::PIC1_IRQ_TIMER, code_selector,
+			idt::FLAG_TYPE_32B_INT | idt::FLAG_PRESENT,
+			pit_ir_timer);
 
-    pit_set_counter(PIT_OCW_SC0, PIT_OCW_RATE_GEN, 100); // every 10 ms
+    set_counter(PIT_OCW_SC0, PIT_OCW_RATE_GEN, 100); // every 10 ms
 }
 
-void pit_set_counter(u8 counter, u8 mode, u32 freq) {
+void timer::set_counter(u8 counter, u8 mode, u32 freq) {
     u16 divisor = PIT_INPUT_FREQ / freq;
 
     u8 ocw = 0;
@@ -41,7 +41,7 @@ void pit_set_counter(u8 counter, u8 mode, u32 freq) {
     }
 }
 
-u64 pit_get_ticks() {
+u64 timer::get_ticks() {
     return _pit_ticks;
 }
 
@@ -51,5 +51,5 @@ void pit_ir_timer(struct interrupt_frame* frame) {
     if (_pit_ticks % 4000 == 0) {
 	//debug_printf("Running for (sec): %lld\n", _pit_ticks/100);
     }
-    pic_end_interrupt(PIC1_IRQ_TIMER);
+    idt::pic_end_interrupt(idt::PIC1_IRQ_TIMER);
 }

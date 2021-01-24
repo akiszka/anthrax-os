@@ -36,8 +36,9 @@
 #define PIT_OCW_SC2     0x80 // select counter 2
 
 // * FUNCTIONS *
-void pit_initialize(u16 code_selector);
-void pit_set_counter(u8 counter, u8 mode, u32 freq);
-u64 pit_get_ticks();
-
+namespace timer {
+    void initialize(u16 code_selector);
+    void set_counter(u8 counter, u8 mode, u32 freq);
+    u64 get_ticks();
+}
 #endif // ARCH_I386_TIMER_H

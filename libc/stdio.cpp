@@ -16,8 +16,8 @@ int debug_printf(char *fmt, ...) {
 #ifdef DEBUG
 
 #if defined(__is_libk)
-    uint8_t previous_color = terminal_getcolor();
-    terminal_setcolor(vga_entry_color(VGA_COLOR_BLACK, VGA_COLOR_LIGHT_BROWN));
+    uint8_t previous_color = tty::getcolor();
+    tty::setcolor(vga_entry_color(tty::VGA_COLOR_BLACK, tty::VGA_COLOR_LIGHT_BROWN));
 #endif // __is_libk
 
     printf("[dbg]");
@@ -30,7 +30,7 @@ int debug_printf(char *fmt, ...) {
     va_end(ap);
 
 #if defined(__is_libk)
-    terminal_setcolor(previous_color);
+    tty::setcolor(previous_color);
 #endif // __is_libk
 
     return r;
@@ -43,7 +43,7 @@ int debug_printf(char *fmt, ...) {
 int putchar(int ic) {
 #if defined(__is_libk)
 	char c = (char) ic;
-	terminal_write(&c, sizeof(c));
+	tty::write(&c, sizeof(c));
 #else
 	// TODO: Implement stdio and the write system call.
 #endif

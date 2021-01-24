@@ -11,20 +11,20 @@
 
 extern "C"
 void kernel_main(multiboot_info_t* mbt, u32 magic) {
-    terminal_initialize();
+    tty::initialize();
 
     if (MULTIBOOT_BOOTLOADER_MAGIC != magic) abort();
 
-    hal_system_startup(mbt);
+    hal::system_startup(mbt);
 
     printf("Anthrax OS booted by %s.\n", mbt->boot_loader_name);
     printf("Hello, kernel World!\n");
 
     printf("Available memory: %u MB\n", (mbt->mem_upper + mbt->mem_lower)/1024);
 
-    pci_enumerate();
+    pci::enumerate();
 
     while(1) {
-	printf("read key: %c\n", getch());
+	printf("read key: %c\n", hal::getch());
     }
 }
