@@ -48,7 +48,7 @@ __attribute__ ((interrupt))
 void pit_ir_timer(struct interrupt_frame* frame) {
     _pit_ticks++;
     if (_pit_ticks % 4000 == 0) {
-	debug_printf("Running for (sec): %lld\n", _pit_ticks/100);
+	//debug_printf("Running for (sec): %lld\n", _pit_ticks/100);
     }
     pic_end_interrupt(PIC1_IRQ_TIMER);
 }

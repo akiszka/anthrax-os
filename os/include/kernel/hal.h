@@ -2,6 +2,9 @@
 #define _KERNEL_HAL_H
 
 #include <stdint.h>
+#include <stddef.h>
+
+typedef uintptr_t address;
 
 void hal_system_startup();
 void hal_system_shutdown();
