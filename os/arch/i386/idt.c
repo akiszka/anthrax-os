@@ -130,10 +130,9 @@ void pic_initialize() {
 }
 
 void pic_end_interrupt(uint8_t number) {
-    // TODO: fix this - this comparison doesn't work!
-    if (PIC1_IRQ_BASE <= number < PIC2_IRQ_BASE) {
+    if (PIC1_IRQ_BASE >= number && number < PIC2_IRQ_BASE) {
 	out8(PIC_PRIMARY_REG_CMD_STAT, PIC_OCW2_EOI);
-    } else if (PIC2_IRQ_BASE <= number < (PIC2_IRQ_BASE+7)) {
+    } else if (PIC2_IRQ_BASE >= number &&  number < PIC2_IRQ_BASE+7) {
 	out8(PIC_PRIMARY_REG_CMD_STAT,   PIC_OCW2_EOI);
 	out8(PIC_SECONDARY_REG_CMD_STAT, PIC_OCW2_EOI);
     }

@@ -2,6 +2,7 @@
 
 #include "idt.h"
 #include "timer.h"
+#include "cpu.h"
 
 static uint64_t _pit_ticks=0;
 

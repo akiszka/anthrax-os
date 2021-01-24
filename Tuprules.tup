@@ -13,10 +13,10 @@ CC = i686-elf-gcc
 AR = i686-elf-ar
 
 CFLAGS += -O2
-CFLAGS += -g
 CFLAGS += -ffreestanding
 CFLAGS += -Wall
 CFLAGS += -Wextra
+CFLAGS += -Wno-unused-parameter
 # FIXME: only do this in files with interrupt handlers!
 CFLAGS += -mgeneral-regs-only -mno-red-zone
 

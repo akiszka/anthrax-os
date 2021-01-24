@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <kernel/hal.h>
 #include <kernel/physical_memory.h>
 
