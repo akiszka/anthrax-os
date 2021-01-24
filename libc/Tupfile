@@ -2,9 +2,7 @@ include_rules
 
 CPPFLAGS += -D__is_libk
 
-: foreach stdio/*.cpp  |> !cxx |> stdio/%B.o
-: foreach stdlib/*.cpp |> !cxx |> stdlib/%B.o
-: foreach string/*.cpp |> !cxx |> string/%B.o
+: foreach *.cpp  |> !cxx |> %B.o
 : foreach $(ARCHDIR)/*.cpp |> !cxx |> $(ARCHDIR)/%B.o
 
-: stdio/*.o stdlib/*.o string/*.o $(ARCHDIR)/*.o |> !ar |> libk.a
+: *.o $(ARCHDIR)/*.o |> !ar |> libk.a

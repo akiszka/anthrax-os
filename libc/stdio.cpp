@@ -6,6 +6,11 @@
 #include <kernel/tty.hpp>
 #endif
 
+#if defined(__is_libk)
+#include <kernel/tty.hpp>
+#endif
+
+
 int debug_printf(char *fmt, ...) {
 
 #ifdef DEBUG
@@ -33,4 +38,18 @@ int debug_printf(char *fmt, ...) {
 #else // DEBUG
     return 0;
 #endif //DEBUG
+}
+
+int putchar(int ic) {
+#if defined(__is_libk)
+	char c = (char) ic;
+	terminal_write(&c, sizeof(c));
+#else
+	// TODO: Implement stdio and the write system call.
+#endif
+	return ic;
+}
+
+int puts(const char* string) {
+	return printf("%s\n", string);
 }

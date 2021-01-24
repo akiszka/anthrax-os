@@ -3,3 +3,7 @@
 ##### Do not edit.
 /.gitignore
 /libk.a
+/printf.o
+/stdio.o
+/stdlib.o
+/string.o
