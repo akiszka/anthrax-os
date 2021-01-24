@@ -1,10 +1,10 @@
-#include "gdt.h"
-#include "idt.h"
-#include "timer.h"
-#include "keyboard.h"
+#include "gdt.hpp"
+#include "idt.hpp"
+#include "timer.hpp"
+#include "keyboard.hpp"
 
-#include <kernel/physical_memory.h>
-#include <kernel/hal.h>
+#include <kernel/physical_memory.hpp>
+#include <kernel/hal.hpp>
 
 void hal_system_startup(multiboot_info_t* mbt) {
     gdt_initialize(); // set up the GDT
@@ -22,7 +22,10 @@ void hal_system_startup(multiboot_info_t* mbt) {
 	multiboot_memory_map_t* entry = (multiboot_memory_map_t*) mbt->mmap_addr;
 	while((address)entry < mbt->mmap_addr + mbt->mmap_length) {
 	    // if the address is too big for 32-bit, just skip it
-	    if (entry->addr > UINT32_MAX) goto increment;
+	    if (entry->addr > UINT32_MAX) {
+		entry = (multiboot_memory_map_t*) ((address)entry + entry->size + sizeof(entry->size));
+		continue;
+	    }
 
 	    address addr = entry->addr;
 	    size_t size = entry->len;
@@ -32,7 +35,6 @@ void hal_system_startup(multiboot_info_t* mbt) {
 		pmmgr_set_region_used(addr, size);
 	    }
 
-	increment:
 	    entry = (multiboot_memory_map_t*) ((address)entry + entry->size + sizeof(entry->size));
 	}
     }

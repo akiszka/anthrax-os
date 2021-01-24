@@ -1,7 +1,7 @@
-#include <string.h>
-#include <stdio.h>
+#include <string.hpp>
+#include <stdio.hpp>
 
-#include "gdt.h"
+#include "gdt.hpp"
 
 struct gdt_descriptor _gdt [MAX_DESCRIPTORS];
 struct gdtr           _gdtr;

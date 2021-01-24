@@ -1,7 +1,7 @@
-#include "cpu.h"
+#include "cpu.hpp"
 
-#include <stdio.h>
-#include <device/pci.h>
+#include <stdio.hpp>
+#include <device/pci.hpp>
 
 uint16_t pci_config_read_word (uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset) {
     uint32_t address;
@@ -36,7 +36,7 @@ pci_info pci_get_info(uint8_t bus, uint8_t slot) {
     /* vendors that == 0xFFFF, it must be a non-existent device. */
     if ((info.vendorID = pci_config_read_word(bus, slot, 0, 0)) != 0xFFFF) {
 	info.deviceID = pci_config_read_word(bus, slot, 0, 2);
-	info.class = pci_config_read_word(bus, slot, 0, 11);
+	info.mainclass = pci_config_read_word(bus, slot, 0, 11);
 	info.subclass = pci_config_read_word(bus, slot, 0, 0xA);
 	info.header_type = pci_config_read_word(bus, slot, 0, 0xE);
 	//. . .
@@ -51,7 +51,7 @@ void pci_check_device(uint8_t bus, uint8_t device) {
     if(info.vendorID == 0xFFFF) return;        // Device doesn't exist
 
     pci_check_function(bus, device, function);
-    debug_printf("Found PCI device %x:%x, class: %x, subclass: %x, header: %x, MF: %x\n", info.vendorID, info.deviceID, info.class, info.subclass, info.header_type & 0x7F, (info.header_type & 0x80) >> 7);
+    debug_printf("Found PCI device %x:%x, class: %x, subclass: %x, header: %x, MF: %x\n", info.vendorID, info.deviceID, info.mainclass, info.subclass, info.header_type & 0x7F, (info.header_type & 0x80) >> 7);
 
     if((info.header_type & 0x80) != 0) {
 	// It is a multi-function device, so check remaining functions

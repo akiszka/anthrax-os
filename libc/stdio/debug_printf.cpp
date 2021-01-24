@@ -1,22 +1,22 @@
-#include <stdio.h>
+#include <stdio.hpp>
 #include <stdarg.h>
 
 #if defined(__is_libk)
 #include <stdint.h>
-#include <kernel/tty.h>
+#include <kernel/tty.hpp>
 #endif
 
 int debug_printf(char *fmt, ...) {
 
 #ifdef DEBUG
-    
+
 #if defined(__is_libk)
     uint8_t previous_color = terminal_getcolor();
     terminal_setcolor(vga_entry_color(VGA_COLOR_BLACK, VGA_COLOR_LIGHT_BROWN));
 #endif // __is_libk
 
     printf("[dbg]");
-    
+
     va_list ap;
     int r;
 
@@ -27,7 +27,7 @@ int debug_printf(char *fmt, ...) {
 #if defined(__is_libk)
     terminal_setcolor(previous_color);
 #endif // __is_libk
-	
+
     return r;
 
 #else // DEBUG

@@ -10,6 +10,7 @@ ARCHDIR = arch/$(HOSTARCH)
 &os = os/
 
 CC = i686-elf-gcc
+CXX = i686-elf-g++
 AR = i686-elf-ar
 
 CFLAGS += -O2
@@ -17,10 +18,14 @@ CFLAGS += -ffreestanding
 CFLAGS += -Wall
 CFLAGS += -Wextra
 CFLAGS += -Wno-unused-parameter
-# FIXME: only do this in files with interrupt handlers!
 CFLAGS += -mgeneral-regs-only -mno-red-zone
+
+CXXFLAGS += $(CFLAGS)
+CXXFLAGS += -fno-exceptions
+CXXFLAGS += -fno-rtti
 
 CPPFLAGS += -DDEBUG
 
 !cc = |> $(CC) -I&(include_libc) -I&(include_os) -c %f -o %o $(CFLAGS) $(CPPFLAGS) |>
+!cxx = |> $(CXX) -I&(include_libc) -I&(include_os) -c %f -o %o $(CXXFLAGS) $(CPPFLAGS) |>
 !ar = |> $(AR) rcs %o %f |>

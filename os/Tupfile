@@ -6,8 +6,8 @@ LIBS += -nostdlib
 LIBS += -lk
 LIBS += -lgcc
 
-: foreach kernel/*.S kernel/*.c |> !cc |> kernel/%B.o
+: foreach kernel/*.S kernel/*.cpp |> !cxx |> kernel/%B.o
 
-: foreach $(ARCHDIR)/*.S $(ARCHDIR)/*.c |> !cc |> $(ARCHDIR)/%B.o
+: foreach $(ARCHDIR)/*.S $(ARCHDIR)/*.cpp |> !cxx |> $(ARCHDIR)/%B.o
 
-: kernel/*.o $(ARCHDIR)/*.o | &(libc)/libk.a $(ARCHDIR)/crt/*.o |> $(CC) -T $(ARCHDIR)/linker.ld -o %o $(CFLAGS) $(ARCHDIR)/crt/crti.o $(ARCHDIR)/crt/crtbegin.o %f $(ARCHDIR)/crt/crtend.o $(ARCHDIR)/crt/crtn.o -L&(libc) $(LIBS) |> anthrax.kernel
+: kernel/*.o $(ARCHDIR)/*.o | &(libc)/libk.a $(ARCHDIR)/crt/*.o |> $(CXX) -T $(ARCHDIR)/linker.ld -o %o $(CFLAGS) $(ARCHDIR)/crt/crti.o $(ARCHDIR)/crt/crtbegin.o %f $(ARCHDIR)/crt/crtend.o $(ARCHDIR)/crt/crtn.o -L&(libc) $(LIBS) |> anthrax.kernel

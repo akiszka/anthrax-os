@@ -2,7 +2,7 @@
 #define ARCH_I386_PHYSICAL_MEMORY_H
 
 #include <stdint.h>
-#include <kernel/hal.h>
+#include <kernel/hal.hpp>
 
 #define PMMGR_BLOCK_SIZE 4096 // 4096 B = 4 kB = page size
 #define PMMGR_BLOCKS_TOTAL 1024*1024 // the number of pages = the number of blocks

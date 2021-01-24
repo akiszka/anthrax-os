@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.hpp>
 
 int puts(const char* string) {
 	return printf("%s\n", string);

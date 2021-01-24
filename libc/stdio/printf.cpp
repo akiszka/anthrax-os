@@ -32,7 +32,7 @@
  * The full source is located at https://github.com/mpredfearn/simple-printf/
  */
 
-#include <stdio.h>
+#include <stdio.hpp>
 #include <stddef.h>
 #include <stdarg.h>
 

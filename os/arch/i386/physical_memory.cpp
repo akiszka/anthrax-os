@@ -1,10 +1,10 @@
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <kernel/hal.h>
-#include <kernel/physical_memory.h>
+#include <string.hpp>
+#include <stdio.hpp>
+#include <stdlib.hpp>
+#include <kernel/hal.hpp>
+#include <kernel/physical_memory.hpp>
 
 static uint32_t* pmmgr_bitmap = NULL; // size is in blocks
 

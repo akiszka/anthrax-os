@@ -1,14 +1,15 @@
-#include <stdio.h>
+#include <stdio.hpp>
 #include <stdint.h>
-#include <stdlib.h>
+#include <stdlib.hpp>
 
-#include <kernel/hal.h>
-#include <kernel/tty.h>
+#include <kernel/hal.hpp>
+#include <kernel/tty.hpp>
 #include <kernel/multiboot.h>
-#include <kernel/physical_memory.h>
+#include <kernel/physical_memory.hpp>
 
-#include <device/pci.h>
+#include <device/pci.hpp>
 
+extern "C"
 void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
     terminal_initialize();
 

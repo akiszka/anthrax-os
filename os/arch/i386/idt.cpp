@@ -1,10 +1,10 @@
-#include <stdio.h>
+#include <stdio.hpp>
 #include <stdint.h>
-#include <string.h>
-#include <kernel/tty.h>
+#include <string.hpp>
+#include <kernel/tty.hpp>
 
-#include "cpu.h"
-#include "idt.h"
+#include "cpu.hpp"
+#include "idt.hpp"
 
 void idt_install();
 

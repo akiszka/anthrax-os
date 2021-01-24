@@ -1,8 +1,8 @@
 #include <stdint.h>
 
-#include "idt.h"
-#include "timer.h"
-#include "cpu.h"
+#include "idt.hpp"
+#include "timer.hpp"
+#include "cpu.hpp"
 
 static uint64_t _pit_ticks=0;
 

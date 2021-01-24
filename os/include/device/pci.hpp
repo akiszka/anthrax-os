@@ -9,7 +9,7 @@
 typedef struct PCI_INFO_t {
     uint16_t vendorID;
     uint16_t deviceID;
-    uint8_t class;
+    uint8_t mainclass;
     uint8_t subclass;
     uint8_t header_type; // bit 7 - multiple functions bit, bits 6:0 - header type, 0 - standard, 1 - PCI-to-PCI bridge, 2 - CardBus bridge
 } pci_info;

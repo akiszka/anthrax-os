@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "keyboard.h"
-#include "idt.h"
-#include "cpu.h"
+#include "keyboard.hpp"
+#include "idt.hpp"
+#include "cpu.hpp"
 
 static uint8_t _scancode = 0;
 static bool _waiting_for_keys = false;
