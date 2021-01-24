@@ -1,6 +1,6 @@
 #include <stdio.hpp>
-#include <stdint.h>
 #include <string.hpp>
+#include <types.hpp>
 #include <kernel/tty.hpp>
 
 #include "cpu.hpp"
@@ -32,7 +32,7 @@ __attribute__ ((interrupt)) void idt_ir_machine_check(struct interrupt_frame* fr
 struct idt_descriptor    _idt [MAX_INTERRUPTS];
 struct idtr              _idtr;
 
-void idt_generate_interrupt(uint8_t n) {
+void idt_generate_interrupt(u8 n) {
     // above code modifies the 0 to int number to generate
     asm volatile (
 	"movb %%al, genint+1;"
@@ -43,11 +43,11 @@ void idt_generate_interrupt(uint8_t n) {
 	: "a"(n));
 }
 
-int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IRQ_HANDLER handler) {
+int idt_set_descriptor(u16 i, u16 code_selector, u8 flags, IDT_IRQ_HANDLER handler) {
     if (i > MAX_INTERRUPTS) return -1;
     if (!handler) return -1;
 
-    uint32_t base = (uint32_t)&(*handler);
+    uint32_t base = (address) &(*handler);
 
     _idt[i].baseLo = base & 0xffff;
     _idt[i].baseHi = (base >> 16) & 0xffff;
@@ -58,9 +58,9 @@ int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IR
     return 0;
 }
 
-void idt_initialize(uint16_t code_selector) {
+void idt_initialize(u16 code_selector) {
     _idtr.m_limit = sizeof (struct idt_descriptor) * MAX_INTERRUPTS-1;
-    _idtr.m_base = (uint32_t)_idt;
+    _idtr.m_base = (u32)(address) _idt;
 
     memset((void*)_idt, 0, sizeof (struct idt_descriptor) * MAX_INTERRUPTS-1);
 
@@ -103,7 +103,7 @@ void idt_initialize(uint16_t code_selector) {
     idt_set_descriptor(18, code_selector, IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
 			   idt_ir_machine_check);
 
-    for(uint16_t i = 19; i < MAX_INTERRUPTS; ++i)
+    for(u16 i = 19; i < MAX_INTERRUPTS; ++i)
 	idt_set_descriptor(i, code_selector,
 			   IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
 			   idt_default_ir);
@@ -129,7 +129,7 @@ void pic_initialize() {
     out8(PIC_SECONDARY_REG_DATA_MASK, PIC_ICW4_uPM); io_wait();
 }
 
-void pic_end_interrupt(uint8_t number) {
+void pic_end_interrupt(u8 number) {
     if (PIC1_IRQ_BASE >= number && number < PIC2_IRQ_BASE) {
 	out8(PIC_PRIMARY_REG_CMD_STAT, PIC_OCW2_EOI);
     } else if (PIC2_IRQ_BASE >= number &&  number < PIC2_IRQ_BASE+7) {

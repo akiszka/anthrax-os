@@ -1,11 +1,10 @@
-#include <stdint.h>
-#include <stdbool.h>
+#include <types.hpp>
 
 #include "keyboard.hpp"
 #include "idt.hpp"
 #include "cpu.hpp"
 
-static uint8_t _scancode = 0;
+static u8 _scancode = 0;
 static bool _waiting_for_keys = false;
 
 static const char _scancode_to_ascii[0xff] = {
@@ -33,14 +32,14 @@ static const char _scancode_to_ascii[0xff] = {
 
 __attribute__ ((interrupt)) void keyboard_ir(struct interrupt_frame* frame);
 
-void keyboard_initialize(uint16_t code_selector) {
+void keyboard_initialize(u16 code_selector) {
     idt_set_descriptor(PIC1_IRQ_KEYBOARD, code_selector,
 		       IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
 		       keyboard_ir);
 }
 
 uint8_t keybord_wait_for_key() {
-    uint8_t result = 0;
+    u8 result = 0;
     _waiting_for_keys = true;
     while ((result = _scancode_to_ascii[_scancode]) == 0) { // wait for a printable char
 	io_wait();

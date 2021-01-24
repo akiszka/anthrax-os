@@ -1,24 +1,24 @@
-#include <stdint.h>
-
 #ifndef ARCH_I386_GDT_H
 #define ARCH_I386_GDT_H 1
 
+#include <types.hpp>
+
 // number of descriptors in the table
-#define MAX_DESCRIPTORS 3 
+#define MAX_DESCRIPTORS 3
 
 struct gdtr { // Special pointer for the GDT
-	uint16_t		m_limit; // size of gdt
-	uint32_t		m_base; // base address of gdt
+	u16		m_limit; // size of gdt
+	u32		m_base; // base address of gdt
 } __attribute__ ((packed));
 
 struct gdt_descriptor {
-	uint16_t limitLo; // bits 0-15 of segment limit
-	uint16_t baseLo; // bits 0-15 of base address
-	uint8_t  baseMid; // bits 16-23 of the base address
-	uint8_t  access; // access byte
-	uint8_t  limitHi_flags; // bits: LLLLFFFF; L - bits 16-20 of limit, F - flags
+	u16 limitLo; // bits 0-15 of segment limit
+	u16 baseLo; // bits 0-15 of base address
+	u8  baseMid; // bits 16-23 of the base address
+	u8  access; // access byte
+	u8  limitHi_flags; // bits: LLLLFFFF; L - bits 16-20 of limit, F - flags
 	                // this is terrible. too bad.
-	uint8_t  baseHi; // bits 24-32 of base address
+	u8  baseHi; // bits 24-32 of base address
 } __attribute__ ((packed));
 
 // ACCESS BYTE:
@@ -53,7 +53,7 @@ struct gdt_descriptor {
 // Selector - bits: 0-1 - ring; 2 - true for LDT false for GDT; 3-15 - index
 #define gdt_get_selector(i, ring) ( ( (i & 0x1fff) << 3 ) | (ring & 0x3) )
 
-void gdt_set_descriptor(uint16_t i, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags);
+void gdt_set_descriptor(u16 i, u32 base, u32 limit, u8 access, u8 flags);
 void gdt_initialize();
 void gdt_install();
 

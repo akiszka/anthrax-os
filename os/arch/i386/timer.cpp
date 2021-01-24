@@ -1,14 +1,14 @@
-#include <stdint.h>
+#include <types.hpp>
 
 #include "idt.hpp"
 #include "timer.hpp"
 #include "cpu.hpp"
 
-static uint64_t _pit_ticks=0;
+static u64 _pit_ticks=0;
 
 __attribute__ ((interrupt)) void pit_ir_timer(struct interrupt_frame* frame);
 
-void pit_initialize(uint16_t code_selector) {
+void pit_initialize(u16 code_selector) {
     idt_set_descriptor(PIC1_IRQ_TIMER, code_selector,
 		       IDT_FLAG_TYPE_32B_INT | IDT_FLAG_PRESENT,
 		       pit_ir_timer);
@@ -16,10 +16,10 @@ void pit_initialize(uint16_t code_selector) {
     pit_set_counter(PIT_OCW_SC0, PIT_OCW_RATE_GEN, 100); // every 10 ms
 }
 
-void pit_set_counter(uint8_t counter, uint8_t mode, uint32_t freq) {
-    uint16_t divisor = PIT_INPUT_FREQ / freq;
+void pit_set_counter(u8 counter, u8 mode, u32 freq) {
+    u16 divisor = PIT_INPUT_FREQ / freq;
 
-    uint8_t ocw = 0;
+    u8 ocw = 0;
     ocw |= PIT_OCW_TYPE_BINARY; // set type to binary
     ocw |= PIT_OCW_MASK_MODE & mode; // set the mode
     ocw |= PIT_OCW_MASK_RL   & PIT_OCW_RL_LSB_MSB; // set lsb and msb one after another
@@ -41,7 +41,7 @@ void pit_set_counter(uint8_t counter, uint8_t mode, uint32_t freq) {
     }
 }
 
-uint64_t pit_get_ticks() {
+u64 pit_get_ticks() {
     return _pit_ticks;
 }
 

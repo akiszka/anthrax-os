@@ -3,12 +3,12 @@
 #include <stdio.hpp>
 #include <device/pci.hpp>
 
-uint16_t pci_config_read_word (uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset) {
-    uint32_t address;
-    uint32_t lbus  = (uint32_t)bus;
-    uint32_t lslot = (uint32_t)slot;
-    uint32_t lfunc = (uint32_t)func;
-    uint16_t tmp = 0;
+u16 pci_config_read_word (u8 bus, u8 slot, u8 func, u8 offset) {
+    u32 address;
+    u32 lbus  = (u32)bus;
+    u32 lslot = (u32)slot;
+    u32 lfunc = (u32)func;
+    u16 tmp = 0;
 
     /*
       31 - enable bit
@@ -18,19 +18,19 @@ uint16_t pci_config_read_word (uint8_t bus, uint8_t slot, uint8_t func, uint8_t 
       10-8 - function number
       7-0 - register offset (bits 1:0 must be 0)
     */
-    address = (uint32_t)((lbus << 16) | (lslot << 11) |
-			 (lfunc << 8) | (offset & 0xfc) | ((uint32_t)0x80000000));
+    address = (u32)((lbus << 16) | (lslot << 11) |
+			 (lfunc << 8) | (offset & 0xfc) | ((u32)0x80000000));
 
     /* write out the address */
     out32(PCI_CONFIG_ADDRESS, address);
     /* read in the data */
     /* (offset & 2) * 8) = 0 will choose the first word of the 32 bits register */
-    uint32_t read = in32(PCI_CONFIG_DATA);
+    u32 read = in32(PCI_CONFIG_DATA);
     tmp = (read >> ((offset & 3) * 8)) & 0xffff;
     return tmp;
 }
 
-pci_info pci_get_info(uint8_t bus, uint8_t slot) {
+pci_info pci_get_info(u8 bus, u8 slot) {
     pci_info info;
     /* try and read the first configuration register. Since there are no */
     /* vendors that == 0xFFFF, it must be a non-existent device. */
@@ -39,13 +39,12 @@ pci_info pci_get_info(uint8_t bus, uint8_t slot) {
 	info.mainclass = pci_config_read_word(bus, slot, 0, 11);
 	info.subclass = pci_config_read_word(bus, slot, 0, 0xA);
 	info.header_type = pci_config_read_word(bus, slot, 0, 0xE);
-	//. . .
     }
     return info;
 }
 
-void pci_check_device(uint8_t bus, uint8_t device) {
-    uint8_t function = 0;
+void pci_check_device(u8 bus, u8 device) {
+    u8 function = 0;
 
     pci_info info = pci_get_info(bus, device);
     if(info.vendorID == 0xFFFF) return;        // Device doesn't exist
@@ -61,15 +60,15 @@ void pci_check_device(uint8_t bus, uint8_t device) {
     }
 }
 
-void pci_check_function(uint8_t bus, uint8_t device, uint8_t function) {
+void pci_check_function(u8 bus, u8 device, u8 function) {
     (void) bus;
     (void) device;
     (void) function;
 }
 
 void pci_enumerate(void) {
-    uint16_t bus;
-    uint8_t device;
+    u16 bus;
+    u8 device;
 
     for(bus = 0; bus < 256; bus++) {
 	for(device = 0; device < 32; device++) {

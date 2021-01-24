@@ -1,12 +1,11 @@
-#include <stddef.h>
 #include <stdint.h>
 #include <string.hpp>
 #include <stdio.hpp>
 #include <stdlib.hpp>
-#include <kernel/hal.hpp>
+#include <types.hpp>
 #include <kernel/physical_memory.hpp>
 
-static uint32_t* pmmgr_bitmap = NULL; // size is in blocks
+static u32* pmmgr_bitmap = NULL; // size is in blocks
 
 extern int __kernel_end;
 extern int __kernel_start;
@@ -16,26 +15,26 @@ address kernel_end_aligned;
 
 void pmmgr_initialize() {
     kernel_end_aligned = kernel_end + (PMMGR_BLOCK_SIZE - kernel_end % PMMGR_BLOCK_SIZE);
-    pmmgr_bitmap = (uint32_t*) kernel_end_aligned;
+    pmmgr_bitmap = (u32*) kernel_end_aligned;
     memset(pmmgr_bitmap, 0xFFFFFFFF, PMMGR_BLOCKS_TOTAL/8);
 }
 
-void pmmgr_set_block_used(uint32_t block_number) {
+void pmmgr_set_block_used(u32 block_number) {
     pmmgr_bitmap[block_number / 32] |= 1 << (block_number % 32);
 }
 
-void pmmgr_set_block_unused(uint32_t block_number) {
+void pmmgr_set_block_unused(u32 block_number) {
     pmmgr_bitmap[block_number / 32] &= ~(1 << (block_number % 32));
 }
 
-int pmmgr_test_block(uint32_t block_number) {
+int pmmgr_test_block(u32 block_number) {
     return pmmgr_bitmap[block_number / 32] & (1 << (block_number % 32));
 }
 
-uint32_t pmmgr_find_free_block() {
-    for (uint32_t i = 0; i < PMMGR_BLOCKS_TOTAL/32; ++i) {
+u32 pmmgr_find_free_block() {
+    for (u32 i = 0; i < PMMGR_BLOCKS_TOTAL/32; ++i) {
 	if (pmmgr_bitmap[i] != 0xFFFFFFFF) {
-	    for (uint8_t j = 0; j < 32; ++j) {
+	    for (u8 j = 0; j < 32; ++j) {
 		if (pmmgr_test_block(32*i+j) == 0) {
 		    return 32*i+j;
 		}
@@ -47,7 +46,7 @@ uint32_t pmmgr_find_free_block() {
 }
 
 address pmmgr_block_alloc() {
-    uint32_t block = pmmgr_find_free_block();
+    u32 block = pmmgr_find_free_block();
     if (0 == block) {
 	printf("No available memory!\n");
 	abort();
@@ -61,13 +60,13 @@ address pmmgr_block_alloc() {
 }
 
 void pmmgr_block_free(address ptr) {
-    uint32_t block = ptr / PMMGR_BLOCK_SIZE;
+    u32 block = ptr / PMMGR_BLOCK_SIZE;
     pmmgr_set_block_unused(block);
 }
 
 void pmmgr_set_region_used(address base, size_t size) {
-    uint32_t aligned = base / PMMGR_BLOCK_SIZE;
-    uint32_t blocks = size / PMMGR_BLOCK_SIZE;
+    u32 aligned = base / PMMGR_BLOCK_SIZE;
+    u32 blocks = size / PMMGR_BLOCK_SIZE;
     if (size % PMMGR_BLOCK_SIZE > 0)
 	blocks += 1;
 
@@ -79,8 +78,8 @@ void pmmgr_set_region_used(address base, size_t size) {
 }
 
 void pmmgr_set_region_unused(address base, size_t size) {
-    uint32_t aligned = base / PMMGR_BLOCK_SIZE;
-    uint32_t blocks = size / PMMGR_BLOCK_SIZE;
+    u32 aligned = base / PMMGR_BLOCK_SIZE;
+    u32 blocks = size / PMMGR_BLOCK_SIZE;
 
     debug_printf("region UNused: base %lu size %lu blksize %u\n", base, size, blocks);
 

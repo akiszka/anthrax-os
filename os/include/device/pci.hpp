@@ -1,23 +1,23 @@
 #ifndef _DEVICE_PCI_H
 #define _DEVICE_PCI_H
 
-#include <stdint.h>
+#include <types.hpp>
 
 #define PCI_CONFIG_ADDRESS 0xCF8
 #define PCI_CONFIG_DATA 0xCFC
 
 typedef struct PCI_INFO_t {
-    uint16_t vendorID;
-    uint16_t deviceID;
-    uint8_t mainclass;
-    uint8_t subclass;
-    uint8_t header_type; // bit 7 - multiple functions bit, bits 6:0 - header type, 0 - standard, 1 - PCI-to-PCI bridge, 2 - CardBus bridge
+    u16 vendorID;
+    u16 deviceID;
+    u8 mainclass;
+    u8 subclass;
+    u8 header_type; // bit 7 - multiple functions bit, bits 6:0 - header type, 0 - standard, 1 - PCI-to-PCI bridge, 2 - CardBus bridge
 } pci_info;
 
-uint16_t pci_config_read_word (uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset);
-pci_info pci_get_info(uint8_t bus, uint8_t slot);
-void pci_check_device(uint8_t bus, uint8_t device);
-void pci_check_function(uint8_t bus, uint8_t device, uint8_t function);
+u16 pci_config_read_word (u8 bus, u8 slot, u8 func, u8 offset);
+pci_info pci_get_info(u8 bus, u8 slot);
+void pci_check_device(u8 bus, u8 device);
+void pci_check_function(u8 bus, u8 device, u8 function);
 void pci_enumerate(void);
 
 #endif // _DEVICE_PCI_H

@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include <types.hpp>
 
 #ifndef ARCH_I386_IDT_H
 #define ARCH_I386_IDT_H
@@ -7,21 +7,21 @@
 
 struct interrupt_frame
 {
-	uint32_t ip;
-	uint32_t cs;
-	uint32_t flags;
-	uint32_t sp;
-	uint32_t ss;
+    u32 ip;
+    u32 cs;
+    u32 flags;
+    u32 sp;
+    u32 ss;
 };
 
 typedef void (*IDT_IRQ_HANDLER)(struct interrupt_frame*);
 
 struct idt_descriptor {
-	uint16_t		baseLo; // bits 0-15 of ir address
-	uint16_t		sel; // code selector from gdt
-	uint8_t			reserved; // should be 0
-	uint8_t			flags; // flags
-	uint16_t		baseHi; // bits 16-32 of ir address
+    u16		baseLo; // bits 0-15 of ir address
+    u16		sel; // code selector from gdt
+    u8          reserved; // should be 0
+    u8		flags; // flags
+    u16		baseHi; // bits 16-32 of ir address
 } __attribute__((packed));
 
 // FLAGS:
@@ -42,8 +42,8 @@ struct idt_descriptor {
 #define IDT_FLAG_PRESENT 0x80
 
 struct idtr { // idt pointer
-	uint16_t		m_limit; // idt size
-	uint32_t		m_base; // idt base address
+    u16 m_limit; // idt size
+    u32 m_base; // idt base address
 } __attribute__((packed));
 
 #define PIC_PRIMARY_REG_CMD_STAT 0x20
@@ -73,17 +73,17 @@ struct idtr { // idt pointer
 #define PIC_OCW1_MASK(irq) (1 << irq) // mask an interrupt
 
 /*
-   OCW2 COMMANDS
-R Bit	SL Bit	EOI Bit	Description
-0	0	0	Rotate in Automatic EOI mode (CLEAR)
-0	0	1	Non specific EOI command
-0	1	0	No operation
-0	1	1	Specific EOI command
-1	0	0	Rotate in Automatic EOI mode (SET)
-1	0	1	Rotate on non specific EOI
-1	1	0	Set priority command
-1	1	1	Rotate on specific EOI
- */
+  OCW2 COMMANDS
+  R Bit	SL Bit	EOI Bit	Description
+  0	0	0	Rotate in Automatic EOI mode (CLEAR)
+  0	0	1	Non specific EOI command
+  0	1	0	No operation
+  0	1	1	Specific EOI command
+  1	0	0	Rotate in Automatic EOI mode (SET)
+  1	0	1	Rotate on non specific EOI
+  1	1	0	Set priority command
+  1	1	1	Rotate on specific EOI
+*/
 #define PIC_OCW2_L(level) (level & 0x03) // int level upon which to react
 #define PIC_OCW2_EOI 0x20 // end of interrupt signal
 #define PIC_OCW2_SL  0x40 // selection
@@ -107,10 +107,10 @@ R Bit	SL Bit	EOI Bit	Description
 #define PIC2_IRQ_FPU        5+40
 #define PIC2_IRQ_HDC        6+40
 
-void idt_generate_interrupt(uint8_t n);
-int idt_set_descriptor(uint16_t i, uint16_t code_selector, uint8_t flags, IDT_IRQ_HANDLER handler);
-void idt_initialize(uint16_t code_selector);
+void idt_generate_interrupt(u8 n);
+int idt_set_descriptor(u16 i, u16 code_selector, u8 flags, IDT_IRQ_HANDLER handler);
+void idt_initialize(u16 code_selector);
 void pic_initialize();
-void pic_end_interrupt(uint8_t number);
+void pic_end_interrupt(u8 number);
 
 #endif // ARCH_I386_IDT_H

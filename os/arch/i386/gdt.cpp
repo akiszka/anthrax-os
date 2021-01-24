@@ -6,7 +6,7 @@
 struct gdt_descriptor _gdt [MAX_DESCRIPTORS];
 struct gdtr           _gdtr;
 
-void gdt_set_descriptor(uint16_t i, uint32_t base, uint32_t limit, uint8_t access, uint8_t flags) {
+void gdt_set_descriptor(u16 i, u32 base, u32 limit, u8 access, u8 flags) {
 	if (i > MAX_DESCRIPTORS)
 		return;
 
@@ -27,7 +27,7 @@ void gdt_set_descriptor(uint16_t i, uint32_t base, uint32_t limit, uint8_t acces
 
 void gdt_initialize() {
 	_gdtr.m_limit = (sizeof (struct gdt_descriptor) * MAX_DESCRIPTORS)-1;
-	_gdtr.m_base = (uint32_t) _gdt;
+	_gdtr.m_base = (u32)(address) _gdt;
 
 	debug_printf("GDTR limit: 0x%x base: 0x%x\n", _gdtr.m_limit, _gdtr.m_base);
 

@@ -1,7 +1,7 @@
 #ifndef ARCH_I386_TIMER_H
 #define ARCH_I386_TIMER_H
 
-#include <stdint.h>
+#include <types.hpp>
 
 // * MISC *
 #define PIT_INPUT_FREQ 1193180
@@ -36,8 +36,8 @@
 #define PIT_OCW_SC2     0x80 // select counter 2
 
 // * FUNCTIONS *
-void pit_initialize(uint16_t code_selector);
-void pit_set_counter(uint8_t counter, uint8_t mode, uint32_t freq);
-uint64_t pit_get_ticks();
+void pit_initialize(u16 code_selector);
+void pit_set_counter(u8 counter, u8 mode, u32 freq);
+u64 pit_get_ticks();
 
 #endif // ARCH_I386_TIMER_H

@@ -1,37 +1,36 @@
-#include <stdint.h>
-
+#include <types.hpp>
 #include "cpu.hpp"
 
-void out8(uint16_t port, uint8_t val) {
+void out8(u16 port, u8 val) {
     asm volatile ( "outb %0, %1" : : "a"(val), "Nd"(port) );
 }
 
-void out16(uint16_t port, uint16_t value) {
+void out16(u16 port, u16 value) {
     asm volatile("outw %0, %1" ::"a"(value), "Nd"(port));
 }
 
-void out32(uint16_t port, uint32_t value) {
+void out32(u16 port, u32 value) {
     asm volatile("outl %0, %1" ::"a"(value), "Nd"(port));
 }
 
-uint8_t in8(uint16_t port) {
-    uint8_t ret;
+u8 in8(u16 port) {
+    u8 ret;
     asm volatile ( "inb %1, %0"
                    : "=a"(ret)
                    : "Nd"(port) );
     return ret;
 }
 
-uint16_t in16(uint16_t port) {
-    uint16_t value;
+u16 in16(u16 port) {
+    u16 value;
     asm volatile("inw %1, %0"
                  : "=a"(value)
                  : "Nd"(port));
     return value;
 }
 
-uint32_t in32(uint16_t port) {
-    uint32_t value;
+u32 in32(u16 port) {
+    u32 value;
     asm volatile("inl %1, %0"
                  : "=a"(value)
                  : "Nd"(port));
@@ -45,7 +44,7 @@ void io_wait(void) {
     /* %%al instead of %0 makes no difference.  TODO: does the register need to be zeroed? */
 }
 
-uint8_t are_interrupts_enabled() {
+u8 are_interrupts_enabled() {
     unsigned long flags;
     asm volatile ( "pushf\n\t"
                    "pop %0"
@@ -53,8 +52,8 @@ uint8_t are_interrupts_enabled() {
     return flags & (1 << 9);
 }
 
-uint64_t rdtsc() { // read the number of clock cycles elapsed since last reset
-    uint64_t ret;
+u64 rdtsc() { // read the number of clock cycles elapsed since last reset
+    u64 ret;
     asm volatile ( "rdtsc" : "=A"(ret) );
     return ret;
 }

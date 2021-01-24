@@ -1,20 +1,20 @@
-#include <stdint.h>
+#include <types.hpp>
 
 #ifndef ARCH_I386_CPU_H
 #define ARCH_I386_CPU_H
 
-void out8(uint16_t port, uint8_t val);
-void out16(uint16_t port, uint16_t value);
-void out32(uint16_t port, uint32_t value);
+void out8(u16 port, u8 val);
+void out16(u16 port, u16 value);
+void out32(u16 port, u32 value);
 
-uint8_t in8(uint16_t port);
-uint16_t in16(uint16_t port);
-uint32_t in32(uint16_t port);
+u8 in8(u16 port);
+u16 in16(u16 port);
+u32 in32(u16 port);
 
 void io_wait(void);
 
-uint8_t are_interrupts_enabled();
+u8 are_interrupts_enabled();
 
-uint64_t rdtsc();
+u64 rdtsc();
 
 #endif // ARCH_I386_CPU_H

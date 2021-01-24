@@ -2,7 +2,7 @@
 #define _STDLIB_H 1
 
 #include <sys/cdefs.hpp>
-#include <stdint.h>
+#include <types.hpp>
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,7 +10,7 @@ extern "C" {
 
 	__attribute__((__noreturn__))
 	void abort(void);
-	char *convert(uint64_t num, int base);
+	char *convert(u64 num, int base);
 
 #ifdef __cplusplus
 }

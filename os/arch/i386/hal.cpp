@@ -3,13 +3,14 @@
 #include "timer.hpp"
 #include "keyboard.hpp"
 
+#include <types.hpp>
 #include <kernel/physical_memory.hpp>
 #include <kernel/hal.hpp>
 
 void hal_system_startup(multiboot_info_t* mbt) {
     gdt_initialize(); // set up the GDT
 
-    uint16_t code_selector = gdt_get_selector(1, 0);
+    u16 code_selector = gdt_get_selector(1, 0);
 
     idt_initialize(code_selector); // set up the IDT
     pic_initialize(); // set up the interrupt controller

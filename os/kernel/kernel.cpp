@@ -1,5 +1,5 @@
 #include <stdio.hpp>
-#include <stdint.h>
+#include <types.hpp>
 #include <stdlib.hpp>
 
 #include <kernel/hal.hpp>
@@ -10,7 +10,7 @@
 #include <device/pci.hpp>
 
 extern "C"
-void kernel_main(multiboot_info_t* mbt, uint32_t magic) {
+void kernel_main(multiboot_info_t* mbt, u32 magic) {
     terminal_initialize();
 
     if (MULTIBOOT_BOOTLOADER_MAGIC != magic) abort();

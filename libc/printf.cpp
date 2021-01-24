@@ -33,7 +33,7 @@
  */
 
 #include <stdio.hpp>
-#include <stddef.h>
+#include <types.hpp>
 #include <stdarg.h>
 
 static void simple_outputchar(char **str, char c)
